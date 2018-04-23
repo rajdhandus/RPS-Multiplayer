@@ -1,0 +1,10 @@
+* {
+  text-align: center;
+}
+
+.person {
+  display: inline-block;
+  margin: 10px;
+  border: solid 1px #eee;
+  box-shadow: 0 2px 2px #ccc;
+}
