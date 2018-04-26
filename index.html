@@ -17,37 +17,42 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <input type="text" placeholder="Name">
-                <button class="btn btn-primary">Start</button>
+                <input id="nameInput" type="text" placeholder="Name">
+                <button id="startBtn" class="btn btn-primary">Start</button>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-1">
             </div>
-            <div class="col-sm-2 person">
-                <p>Player 1</p>
-                <button class="btn btn-primary">Rock</button>
+            <div id="person1" class="col-sm-2 person">
+                <p id="player1Name">Waiting for Player 1</p>
+                <button id="player1Rock" class="btn btn-primary">Rock</button>
                 <br>
                 <br>
-                <button class="btn btn-primary">Paper</button>
+                <button id="player1Paper" class="btn btn-primary">Paper</button>
                 <br>
                 <br>
-                <button class="btn btn-primary">Scissors</button>
+                <button id="player1Scissors" class="btn btn-primary">Scissors</button>
             </div>
             <div class="col-sm-5 person">
                 <p>Arena</p>
             </div>
-            <div class="col-sm-2 person">
-                <p>Player 2</p>
-                <button class="btn btn-primary">Rock</button>
+            <div id="person2" class="col-sm-2 person">
+                <p id="player2Name">Waiting for Player 2</p>
+                <button id="player2Rock" class="btn btn-primary">Rock</button>
                 <br>
                 <br>
-                <button class="btn btn-primary">Paper</button>
+                <button id="player2Paper" class="btn btn-primary">Paper</button>
                 <br>
                 <br>
-                <button class="btn btn-primary">Scissors</button>
+                <button id="player2Scissors" class="btn btn-primary">Scissors</button>
             </div>
             <div class="col-sm-1">
+            </div>
+        </div>
+        <div class="row">
+            <div id="statusMsg" class="col-sm-12">
+
             </div>
         </div>
     </div>
@@ -56,5 +61,6 @@
 <script src="./assets/js/popper.min.js"></script>
 <script src="./assets/js/bootstrap.min.js"></script>
 <script src="./assets/js/firebase.js"></script>
+<script src="./assets/js/app.js"></script>
 
 </html>
