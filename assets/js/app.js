@@ -55,6 +55,23 @@ var playersObject = {
 
 console.log(playersObject);
 
+window.onbeforeunload = function() {
+  console.log("************************************");
+  if (whoAmI === 1) {
+    database.ref("/players/player1/name").set("");
+    database.ref("/players/player1/currentChoice").set("");
+    database.ref("/players/player1/losses").set(0);
+    database.ref("/players/player1/wins").set(0);
+    database.ref("/players/player1/ties").set(0);
+  } else if (whoAmI === 2) {
+    database.ref("/players/player2/name").set("");
+    database.ref("/players/player2/currentChoice").set("");
+    database.ref("/players/player2/losses").set(0);
+    database.ref("/players/player2/wins").set(0);
+    database.ref("/players/player2/ties").set(0);
+  }
+};
+
 function assignPlayer() {
   var nameOfPlayer = $nameInput.val().trim();
   console.log(nameOfPlayer);
@@ -62,9 +79,11 @@ function assignPlayer() {
   if (playersObject.players.player1.name === "") {
     playersObject.players.player1.name = nameOfPlayer;
     whoAmI = 1;
+    // sessionStorage.setItem("whoAmI", 1);
   } else if (playersObject.players.player2.name === "") {
     playersObject.players.player2.name = nameOfPlayer;
     whoAmI = 2;
+    // sessionStorage.setItem("whoAmI", 2);
     playersObject.whoseTurn = 1;
   } else {
     console.log("Both players are assigned");
@@ -204,7 +223,7 @@ function playerChoiceEvent() {
   ) {
     console.log("Player 1 button clicked");
     console.log($(this).attr("id"));
-    playersObject.players.player1.currentChoice = $(this).attr("id");
+    playersObject.players.player1.currentChoice = $(this).text();
     playersObject.whoseTurn = 2;
     database.ref().set(playersObject);
     // database.ref("/player1/currentChoice").set($(this).attr("id"));
@@ -217,7 +236,7 @@ function playerChoiceEvent() {
   ) {
     console.log("Player 2 button clicked");
     console.log($(this).attr("id"));
-    playersObject.players.player2.currentChoice = $(this).attr("id");
+    playersObject.players.player2.currentChoice = $(this).text();
     playersObject.whoseTurn = 1;
     database.ref().set(playersObject);
     // database.ref("/player2/currentChoice").set($(this).attr("id"));
@@ -245,19 +264,26 @@ function chickenDinner() {
       p2Choice = snapshot.val();
     });
 
-  if (p1Choice === p1Choice) {
+  if (p1Choice === p2Choice) {
     //tie
+    console.log("It's a tie");
   } else if (p1Choice === "player1Rock" && p2Choice === "player2Scissors") {
     // player 1 wins
+    console.log("Player 1 wins");
   } else if (p1Choice === "player1Rock" && p2Choice === "player2Paper") {
     // player 2 wins
+    console.log("Player 2 wins");
   } else if (p1Choice === "player1Paper" && p2Choice === "player2Scissors") {
     // player 2 wins
+    console.log("Player 2 wins");
   } else if (p1Choice === "player1Paper" && p2Choice === "player2Rock") {
     // player 1 wins
+    console.log("Player 1 wins");
   } else if (p1Choice === "player1Scissors" && p2Choice === "player2Rock") {
     // player 2 wins
+    console.log("Player 2 wins");
   } else if (p1Choice === "player1Scissors" && p2Choice === "player2Paper") {
     // player 1 wins
+    console.log("Player 1 wins");
   }
 }
