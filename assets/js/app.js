@@ -223,5 +223,41 @@ function playerChoiceEvent() {
     // database.ref("/player2/currentChoice").set($(this).attr("id"));
     // database.ref("/whoseTurn").set(1);
     // highlightTurns();
+    chickenDinner();
+  }
+}
+
+function chickenDinner() {
+  var p1Choice;
+  var p2Choice;
+
+  database
+    .ref("/players/player1/currentChoice")
+    .on("value", function(snapshot) {
+      console.log(snapshot.val());
+      p1Choice = snapshot.val();
+    });
+
+  database
+    .ref("/players/player2/currentChoice")
+    .on("value", function(snapshot) {
+      console.log(snapshot.val());
+      p2Choice = snapshot.val();
+    });
+
+  if (p1Choice === p1Choice) {
+    //tie
+  } else if (p1Choice === "player1Rock" && p2Choice === "player2Scissors") {
+    // player 1 wins
+  } else if (p1Choice === "player1Rock" && p2Choice === "player2Paper") {
+    // player 2 wins
+  } else if (p1Choice === "player1Paper" && p2Choice === "player2Scissors") {
+    // player 2 wins
+  } else if (p1Choice === "player1Paper" && p2Choice === "player2Rock") {
+    // player 1 wins
+  } else if (p1Choice === "player1Scissors" && p2Choice === "player2Rock") {
+    // player 2 wins
+  } else if (p1Choice === "player1Scissors" && p2Choice === "player2Paper") {
+    // player 1 wins
   }
 }
