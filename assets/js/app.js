@@ -70,6 +70,9 @@ window.onbeforeunload = function() {
     database.ref("/players/player2/wins").set(0);
     database.ref("/players/player2/ties").set(0);
   }
+  database.ref("/whoseTurn").set(0);
+  $person2.removeClass("highlight");
+  $person1.removeClass("highlight");
 };
 
 function assignPlayer() {
@@ -154,6 +157,7 @@ function highlightTurns() {
       $statusMsg.text("Opponent's turn! Please wait");
     } else if (whoAmI === 1) {
       $statusMsg.text("Your turn to choose");
+      toggleButtons(whoAmI, true);
     }
   }
   if (
@@ -167,6 +171,7 @@ function highlightTurns() {
       $statusMsg.text("Opponent's turn! Please wait");
     } else if (whoAmI === 2) {
       $statusMsg.text("Your turn to choose");
+      toggleButtons(whoAmI, true);
     }
   }
 }
@@ -229,6 +234,7 @@ function playerChoiceEvent() {
     // database.ref("/player1/currentChoice").set($(this).attr("id"));
     // database.ref("/whoseTurn").set(2);
     // highlightTurns();
+    toggleButtons(whoAmI, false);
   } else if (
     $(this)
       .attr("id")
@@ -242,7 +248,58 @@ function playerChoiceEvent() {
     // database.ref("/player2/currentChoice").set($(this).attr("id"));
     // database.ref("/whoseTurn").set(1);
     // highlightTurns();
+    toggleButtons(whoAmI, false);
     chickenDinner();
+  }
+}
+
+function toggleButtons(whocalled, enable) {
+  if (!enable) {
+    if (whocalled === 1) {
+      //
+      $player1Paper.attr("disabled", "disabled");
+      $player1Paper.toggleClass("disabled", true);
+      $player1Rock.attr("disabled", "disabled");
+      $player1Rock.toggleClass("disabled", true);
+      $player1Scissors.attr("disabled", "disabled");
+      $player1Scissors.toggleClass("disabled", true);
+    } else if (whocalled === 2) {
+      //
+      $player2Paper.attr("disabled", "disabled");
+      $player2Paper.toggleClass("disabled", true);
+      $player2Rock.attr("disabled", "disabled");
+      $player2Rock.toggleClass("disabled", true);
+      $player2Scissors.attr("disabled", "disabled");
+      $player2Scissors.toggleClass("disabled", true);
+    }
+  } else {
+    if (whocalled === 1) {
+      //
+      $player1Paper.attr("disabled", "");
+      $player1Paper.prop("disabled", false);
+      $player1Paper.removeClass("disabled");
+
+      $player1Rock.attr("disabled", "");
+      $player1Rock.prop("disabled", false);
+      $player1Rock.removeClass("disabled");
+
+      $player1Scissors.attr("disabled", "");
+      $player1Scissors.prop("disabled", false);
+      $player1Scissors.removeClass("disabled");
+    } else if (whocalled === 2) {
+      //
+      $player2Paper.attr("disabled", "");
+      $player2Paper.prop("disabled", false);
+      $player2Paper.removeClass("disabled");
+
+      $player2Rock.attr("disabled", "");
+      $player2Rock.prop("disabled", false);
+      $player2Rock.removeClass("disabled");
+
+      $player2Scissors.attr("disabled", "");
+      $player2Scissors.prop("disabled", false);
+      $player2Scissors.removeClass("disabled");
+    }
   }
 }
 
@@ -267,22 +324,22 @@ function chickenDinner() {
   if (p1Choice === p2Choice) {
     //tie
     console.log("It's a tie");
-  } else if (p1Choice === "player1Rock" && p2Choice === "player2Scissors") {
+  } else if (p1Choice === "Rock" && p2Choice === "Scissors") {
     // player 1 wins
     console.log("Player 1 wins");
-  } else if (p1Choice === "player1Rock" && p2Choice === "player2Paper") {
+  } else if (p1Choice === "Rock" && p2Choice === "Paper") {
     // player 2 wins
     console.log("Player 2 wins");
-  } else if (p1Choice === "player1Paper" && p2Choice === "player2Scissors") {
+  } else if (p1Choice === "Paper" && p2Choice === "Scissors") {
     // player 2 wins
     console.log("Player 2 wins");
-  } else if (p1Choice === "player1Paper" && p2Choice === "player2Rock") {
+  } else if (p1Choice === "Paper" && p2Choice === "Rock") {
     // player 1 wins
     console.log("Player 1 wins");
-  } else if (p1Choice === "player1Scissors" && p2Choice === "player2Rock") {
+  } else if (p1Choice === "Scissors" && p2Choice === "Rock") {
     // player 2 wins
     console.log("Player 2 wins");
-  } else if (p1Choice === "player1Scissors" && p2Choice === "player2Paper") {
+  } else if (p1Choice === "Scissors" && p2Choice === "Paper") {
     // player 1 wins
     console.log("Player 1 wins");
   }
