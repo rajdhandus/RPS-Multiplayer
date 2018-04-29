@@ -112,8 +112,13 @@ database.ref("/whoWon").on("value", announceWinner, errorHanlder);
 database.ref("/messages").on("child_added", function(snapshot) {
   var newPost = snapshot.val();
   console.log("message added");
-  $("textarea").val(
-    newPost.who + moment(newPost.postedAt).fromNow() + newPost.msg
+  $("textarea").append(
+    newPost.who +
+      " : " +
+      newPost.msg +
+      "  - " +
+      moment(newPost.postedAt).fromNow() +
+      "\n"
   );
 });
 
@@ -355,9 +360,9 @@ function sendChat() {
   console.log("message is sent");
 
   var msgPushRef = database.ref("/messages").push();
-
+  var thisPlayerName = "player" + whoAmI;
   msgPushRef.set({
-    who: whoAmI,
+    who: playersObject.players[thisPlayerName].name,
     msg: $('input[name="chatInput"]')
       .val()
       .trim(),
