@@ -2,8 +2,7 @@
   text-align: center;
 }
 
-.person,
-textarea {
+.person {
   display: inline;
   box-sizing: content-box;
   margin: 10px;
@@ -23,4 +22,94 @@ button {
 
 #statusMsg {
   text-align: center;
+}
+
+#chatContainer {
+  width: 50%;
+  height: 300px;
+  margin: 0 auto;
+  border: solid 1px #eee;
+  box-shadow: 0 2px 2px #ccc;
+}
+
+/* .darker {
+  border-color: #ccc;
+  background-color: #ddd;
+}
+
+.msgContainer::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.msgContainer img {
+  float: left;
+  max-width: 60px;
+  width: 100%;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+
+.msgContainer img.right {
+  float: right;
+  margin-left: 20px;
+  margin-right: 0;
+}
+
+.time-right {
+  float: right;
+  color: #aaa;
+}
+
+.time-left {
+  float: left;
+  color: #999;
+}
+
+.msgContainer {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+} */
+
+.container {
+  width: 400px;
+  margin: 0 auto;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.chat-container {
+  height: 400px;
+  overflow: auto;
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+  direction: rtl;
+}
+.chat-container .message {
+  border-bottom: solid 1px #ccc;
+  padding: 20px;
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+  direction: ltr;
+}
+.chat-container .message .avatar {
+  float: left;
+  margin-right: 5px;
+}
+.chat-container .message .datetime {
+  float: right;
+  color: #999;
+}
+.send-message-form input {
+  width: 100%;
+  border: none;
+  font-size: 16px;
+  padding: 10px;
+}
+.send-message-form button {
+  display: none;
 }

@@ -64,18 +64,23 @@ window.onbeforeunload = function() {
     database.ref("/players/player1/losses").set(0);
     database.ref("/players/player1/wins").set(0);
     database.ref("/players/player1/ties").set(0);
+    database.ref("/whoseTurn").set(0);
+    database.ref("/whoWon").set(-1);
+    database.ref("/messages").set("");
+    $person2.removeClass("highlight");
+    $person1.removeClass("highlight");
   } else if (whoAmI === 2) {
     database.ref("/players/player2/name").set("");
     database.ref("/players/player2/currentChoice").set("");
     database.ref("/players/player2/losses").set(0);
     database.ref("/players/player2/wins").set(0);
     database.ref("/players/player2/ties").set(0);
+    database.ref("/whoseTurn").set(0);
+    database.ref("/whoWon").set(-1);
+    database.ref("/messages").set("");
+    $person2.removeClass("highlight");
+    $person1.removeClass("highlight");
   }
-  database.ref("/whoseTurn").set(0);
-  database.ref("/whoWon").set(-1);
-  database.ref("/messages").set("");
-  $person2.removeClass("highlight");
-  $person1.removeClass("highlight");
 };
 
 function assignPlayer() {
@@ -86,6 +91,14 @@ function assignPlayer() {
     playersObject.players.player1.name = nameOfPlayer;
     whoAmI = 1;
     $("#statusMsg").html("&nbsp;");
+    $("#chatInput").attr("placeholder", "Type your messages here");
+    // $("#chatInput").attr("disabled", "");
+    // $("#chatInput").removeClass("disabled");
+
+    $("#chatInput").attr("disabled", "");
+    $("#chatInput").prop("disabled", false);
+    $("#chatInput").removeClass("disabled");
+
     if (playersObject.players.player2.name !== "") {
       playersObject.whoseTurn = 1;
     }
@@ -93,6 +106,14 @@ function assignPlayer() {
     playersObject.players.player2.name = nameOfPlayer;
     whoAmI = 2;
     $("#statusMsg").html("&nbsp;");
+    $("#chatInput").attr("placeholder", "Type your messages here");
+    // $("#chatInput").attr("disabled", "");
+    // $("#chatInput").removeClass("disabled");
+
+    $("#chatInput").attr("disabled", "");
+    $("#chatInput").prop("disabled", false);
+    $("#chatInput").removeClass("disabled");
+
     playersObject.whoseTurn = 1;
   } else {
     console.log("Both players are assigned");
@@ -112,14 +133,47 @@ database.ref("/whoWon").on("value", announceWinner, errorHanlder);
 database.ref("/messages").on("child_added", function(snapshot) {
   var newPost = snapshot.val();
   console.log("message added");
-  $("textarea").append(
-    newPost.who +
-      " : " +
-      newPost.msg +
-      "  - " +
-      moment(newPost.postedAt).fromNow() +
-      "\n"
-  );
+  console.log(newPost.who);
+  console.log(playersObject.players.player1.name);
+
+  var message = $("<div>");
+  message.addClass("message");
+  var img = $("<img>");
+  img.addClass("avatar");
+  if (newPost.who === playersObject.players.player1.name) {
+    img.attr("src", "./assets/images/icons8-account-26.png");
+  } else {
+    img.attr("src", "./assets/images/icons8-contacts-26.png");
+  }
+  var timeDiv = $("<div>");
+  timeDiv.addClass("datetime");
+  timeDiv.text(moment(newPost.postedAt).fromNow());
+  var pMsg = $("<p>");
+  pMsg.text(newPost.msg);
+
+  message.append(img);
+  message.append(timeDiv);
+  message.append(pMsg);
+
+  message.prependTo(".chat-container");
+
+  // let img, span;
+  // if (newPost.who === playersObject.players.player1.name) {
+  //   img =
+  //     '<div class="msgContainer"><img src="./assets/images/nopic_192.png" alt="Avatar" style="width:30%;"><p>';
+  //   span = '</p><span class="time-left">';
+  // } else {
+  //   img =
+  //     '<div class="msgContainer darker"><img src="./assets/images/nopic_192.png" alt="Avatar" class="right" style="width:30%;"><p>';
+  //   span = '</p><span class="time-right">';
+  // }
+  // $("#chatContainer").append(
+  //   img +
+  //     newPost.msg +
+  //     span +
+  //     moment(newPost.postedAt).fromNow() +
+  //     "</span></div>"
+  // );
 });
 
 function announceWinner(snapshot) {
@@ -405,3 +459,19 @@ function playerWin(whoThat) {
     });
   }
 }
+
+$(function() {
+  $("form").on("submit", function(event) {
+    event.preventDefault();
+    var msgPushRef = database.ref("/messages").push();
+    var thisPlayerName = "player" + whoAmI;
+    msgPushRef.set({
+      who: playersObject.players[thisPlayerName].name,
+      msg: $("#chatInput")
+        .val()
+        .trim(),
+      postedAt: firebase.database.ServerValue.TIMESTAMP
+    });
+    $("#chatInput").val("");
+  });
+});
