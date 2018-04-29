@@ -58,7 +58,6 @@ var playersObject = {
 console.log(playersObject);
 
 window.onbeforeunload = function() {
-  console.log("************************************");
   if (whoAmI === 1) {
     database.ref("/players/player1/name").set("");
     database.ref("/players/player1/currentChoice").set("");
@@ -74,6 +73,7 @@ window.onbeforeunload = function() {
   }
   database.ref("/whoseTurn").set(0);
   database.ref("/whoWon").set(-1);
+  database.ref("/messages").set("");
   $person2.removeClass("highlight");
   $person1.removeClass("highlight");
 };
@@ -108,6 +108,14 @@ function assignPlayer() {
 database.ref("/players").on("value", syncLocalObj, errorHanlder);
 database.ref("/whoseTurn").on("value", turnChanged, errorHanlder);
 database.ref("/whoWon").on("value", announceWinner, errorHanlder);
+
+database.ref("/messages").on("child_added", function(snapshot) {
+  var newPost = snapshot.val();
+  console.log("message added");
+  $("textarea").val(
+    newPost.who + moment(newPost.postedAt).fromNow() + newPost.msg
+  );
+});
 
 function announceWinner(snapshot) {
   var winner = snapshot.val();
@@ -345,12 +353,6 @@ $("#sendBtn").on("click", sendChat);
 
 function sendChat() {
   console.log("message is sent");
-  var msg =
-    whoAmI +
-    " : " +
-    $('input[name="chatInput"]')
-      .val()
-      .trim();
 
   var msgPushRef = database.ref("/messages").push();
 
@@ -361,7 +363,8 @@ function sendChat() {
       .trim(),
     postedAt: firebase.database.ServerValue.TIMESTAMP
   });
-  $('input[name="chatInput"]').empty();
+
+  $('input[name="chatInput"]').val("");
   $("#sendBtn").attr("disabled", "disabled");
   $("#sendBtn").addClass("disabled");
 }
