@@ -270,6 +270,9 @@ function refreshUI() {
     playersObject.players.player1.name !== ""
   ) {
     $player1Name.text(playersObject.players.player1.name);
+    $("#p1wins").text(playersObject.players.player1.wins);
+    $("#p1losses").text(playersObject.players.player1.losses);
+    $("#p1ties").text(playersObject.players.player1.ties);
   }
   if (
     playersObject &&
@@ -277,6 +280,9 @@ function refreshUI() {
     playersObject.players.player2.name !== ""
   ) {
     $player2Name.text(playersObject.players.player2.name);
+    $("#p2wins").text(playersObject.players.player2.wins);
+    $("#p2losses").text(playersObject.players.player2.losses);
+    $("#p2ties").text(playersObject.players.player2.ties);
   }
 }
 function errorHanlder(errorObj) {
