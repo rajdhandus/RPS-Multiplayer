@@ -26,13 +26,13 @@
             </div>
             <div id="person1" class="col-sm-2 person">
                 <p id="player1Name">Waiting for Player 1</p>
-                <button id="player1Rock" class="btn btn-primary">Rock</button>
+                <button id="player1Rock" disabled="disabled" class="btn btn-primary disabled">Rock</button>
                 <br>
                 <br>
-                <button id="player1Paper" class="btn btn-primary">Paper</button>
+                <button id="player1Paper" disabled="disabled" class="btn btn-primary disabled">Paper</button>
                 <br>
                 <br>
-                <button id="player1Scissors" class="btn btn-primary">Scissors</button>
+                <button id="player1Scissors" disabled="disabled" class="btn btn-primary disabled">Scissors</button>
             </div>
             <div class="col-sm-5 person">
                 <p>Arena</p>
@@ -40,13 +40,13 @@
             </div>
             <div id="person2" class="col-sm-2 person">
                 <p id="player2Name">Waiting for Player 2</p>
-                <button id="player2Rock" class="btn btn-primary">Rock</button>
+                <button id="player2Rock" disabled="disabled" class="btn btn-primary disabled">Rock</button>
                 <br>
                 <br>
-                <button id="player2Paper" class="btn btn-primary">Paper</button>
+                <button id="player2Paper" disabled="disabled" class="btn btn-primary disabled">Paper</button>
                 <br>
                 <br>
-                <button id="player2Scissors" class="btn btn-primary">Scissors</button>
+                <button id="player2Scissors" disabled="disabled" class="btn btn-primary disabled">Scissors</button>
             </div>
             <div class="col-sm-1">
             </div>
@@ -54,6 +54,19 @@
         <div class="row">
             <div id="statusMsg" class="col-sm-12">
 
+            </div>
+        </div>
+        <div class="row">
+            <div id="chatContainer" class="col-sm-12">
+                <textarea readonly rows="10" cols="70">
+                </textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div id="chatInput" class="col-sm-12">
+                <input type="text" placeholder="type messages here" onfocus="this.placeholder = ''" onblur="this.placeholder = 'type messages here'"
+                />
+                <button id="player2Scissors" disabled="disabled" class="btn btn-primary disabled">Send</button>
             </div>
         </div>
     </div>

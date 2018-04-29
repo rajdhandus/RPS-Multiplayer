@@ -117,6 +117,8 @@ function announceWinner(snapshot) {
       $results.text(playersObject.players.player2.name + " wins!!!");
     } else if (winner === 0) {
       $results.text("It's a TIE!!!");
+    } else {
+      $results.text("");
     }
     playersObject.whoWon = winner;
   }
