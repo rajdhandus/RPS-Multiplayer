@@ -137,7 +137,6 @@ function syncLocalObj(snapshot) {
   }
 }
 
-
 function highlightTurns() {
   console.log("highlightTurns " + playersObject.whoseTurn);
 
@@ -331,28 +330,28 @@ function playerWin(whoThat) {
   if (whoThat === 1) {
     console.log("Player 1 wins");
     database.ref("/whoWon").set(1);
-    database.ref("/players/player1/wins").transaction(function(currentwins) { If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/players/player1/wins").transaction(function(currentwins) {
       return (currentwins || 0) + 1;
     });
-    database.ref("/players/player2/losses").transaction(function(currentwins) { If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/players/player2/losses").transaction(function(currentwins) {
       return (currentwins || 0) + 1;
     });
   } else if (whoThat === 2) {
     console.log("Player 2 wins");
     database.ref("/whoWon").set(2);
-    database.ref("/players/player2/wins").transaction(function(currentwins) { If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/players/player2/wins").transaction(function(currentwins) {
       return (currentwins || 0) + 1;
     });
-    database.ref("/players/player1/losses").transaction(function(currentwins) { If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/players/player1/losses").transaction(function(currentwins) {
       return (currentwins || 0) + 1;
     });
   } else {
     console.log("It's a tie");
     database.ref("/whoWon").set(0);
-    database.ref("/players/player1/ties").transaction(function(currentties) { If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/players/player1/ties").transaction(function(currentties) {
       return (currentties || 0) + 1;
     });
-    database.ref("/players/player2/ties").transaction(function(currentties) { If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/players/player2/ties").transaction(function(currentties) {
       return (currentties || 0) + 1;
     });
   }
