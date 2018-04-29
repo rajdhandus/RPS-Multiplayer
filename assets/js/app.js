@@ -51,7 +51,8 @@ var playersObject = {
       currentChoice: ""
     }
   },
-  whoseTurn: 0
+  whoseTurn: 0,
+  whoWon: -1
 };
 
 console.log(playersObject);
@@ -86,11 +87,9 @@ function assignPlayer() {
     if (playersObject.players.player2.name !== "") {
       playersObject.whoseTurn = 1;
     }
-    // sessionStorage.setItem("whoAmI", 1);
   } else if (playersObject.players.player2.name === "") {
     playersObject.players.player2.name = nameOfPlayer;
     whoAmI = 2;
-    // sessionStorage.setItem("whoAmI", 2);
     playersObject.whoseTurn = 1;
   } else {
     console.log("Both players are assigned");
@@ -104,9 +103,23 @@ function assignPlayer() {
 }
 
 database.ref("/players").on("value", syncLocalObj, errorHanlder);
-// database.ref("/player1").on("value", syncLocalObj1, errorHanlder);
-// database.ref("/player2").on("value", syncLocalObj2, errorHanlder);
 database.ref("/whoseTurn").on("value", turnChanged, errorHanlder);
+database.ref("/whoWon").on("value", announceWinner, errorHanlder);
+
+function announceWinner(snapshot) {
+  var winner = snapshot.val();
+  console.log("Winner is " + winner);
+  if (winner !== null && winner !== "") {
+    if (winner === 1) {
+      $results.text(playersObject.players.player1.name + " wins!!!");
+    } else if (winner === 2) {
+      $results.text(playersObject.players.player2.name + " wins!!!");
+    } else if (winner === 0) {
+      $results.text("It's a TIE!!!");
+    }
+    playersObject.whoWon = winner;
+  }
+}
 
 function turnChanged(snapshot) {
   console.log("turnChanged event happened " + snapshot.val());
@@ -121,31 +134,9 @@ function syncLocalObj(snapshot) {
     playersObject.players = snapshot.val();
     refreshUI();
     disableOtherBtns();
-    // highlightTurns();
   }
 }
 
-// function syncLocalObj1(snapshot) {
-//   console.log("syncLocalObj ");
-//   console.log(snapshot.val());
-//   if (snapshot.val() !== null) {
-//     playersObject.players.player1 = snapshot.val();
-//     refreshUI();
-//     disableOtherBtns();
-//     // highlightTurns();
-//   }
-// }
-
-// function syncLocalObj2(snapshot) {
-//   console.log("syncLocalObj ");
-//   console.log(snapshot.val());
-//   if (snapshot.val() !== null) {
-//     playersObject.players.player2 = snapshot.val();
-//     refreshUI();
-//     disableOtherBtns();
-//     // highlightTurns();
-//   }
-// }
 
 function highlightTurns() {
   console.log("highlightTurns " + playersObject.whoseTurn);
@@ -159,7 +150,6 @@ function highlightTurns() {
     $person2.removeClass("highlight");
     if (whoAmI === 2) {
       $statusMsg.text("Opponent's turn! Please wait");
-      // disableOtherBtns();
       toggleButtons(whoAmI, false);
     } else if (whoAmI === 1) {
       $statusMsg.text("Your turn to choose");
@@ -175,7 +165,6 @@ function highlightTurns() {
     $person1.removeClass("highlight");
     if (whoAmI === 1) {
       $statusMsg.text("Opponent's turn! Please wait");
-      // disableOtherBtns();
       toggleButtons(whoAmI, false);
       toggleButtons();
     } else if (whoAmI === 2) {
@@ -240,9 +229,6 @@ function playerChoiceEvent() {
     playersObject.players.player1.currentChoice = $(this).text();
     playersObject.whoseTurn = 2;
     database.ref().set(playersObject);
-    // database.ref("/player1/currentChoice").set($(this).attr("id"));
-    // database.ref("/whoseTurn").set(2);
-    // highlightTurns();
     toggleButtons(whoAmI, false);
   } else if (
     $(this)
@@ -254,9 +240,6 @@ function playerChoiceEvent() {
     playersObject.players.player2.currentChoice = $(this).text();
     playersObject.whoseTurn = 1;
     database.ref().set(playersObject);
-    // database.ref("/player2/currentChoice").set($(this).attr("id"));
-    // database.ref("/whoseTurn").set(1);
-    // highlightTurns();
     toggleButtons(whoAmI, false);
     chickenDinner();
   }
@@ -265,7 +248,6 @@ function playerChoiceEvent() {
 function toggleButtons(whocalled, enable) {
   if (!enable) {
     if (whocalled === 1) {
-      //
       $player1Paper.attr("disabled", "disabled");
       $player1Paper.toggleClass("disabled", true);
       $player1Rock.attr("disabled", "disabled");
@@ -273,7 +255,6 @@ function toggleButtons(whocalled, enable) {
       $player1Scissors.attr("disabled", "disabled");
       $player1Scissors.toggleClass("disabled", true);
     } else if (whocalled === 2) {
-      //
       $player2Paper.attr("disabled", "disabled");
       $player2Paper.toggleClass("disabled", true);
       $player2Rock.attr("disabled", "disabled");
@@ -283,7 +264,6 @@ function toggleButtons(whocalled, enable) {
     }
   } else {
     if (whocalled === 1) {
-      //
       $player1Paper.attr("disabled", "");
       $player1Paper.prop("disabled", false);
       $player1Paper.removeClass("disabled");
@@ -296,7 +276,6 @@ function toggleButtons(whocalled, enable) {
       $player1Scissors.prop("disabled", false);
       $player1Scissors.removeClass("disabled");
     } else if (whocalled === 2) {
-      //
       $player2Paper.attr("disabled", "");
       $player2Paper.prop("disabled", false);
       $player2Paper.removeClass("disabled");
@@ -331,66 +310,49 @@ function chickenDinner() {
     });
 
   if (p1Choice === p2Choice) {
-    //tie
     playerWin(0);
   } else if (p1Choice === "Rock" && p2Choice === "Scissors") {
-    // player 1 wins
     playerWin(1);
   } else if (p1Choice === "Rock" && p2Choice === "Paper") {
-    // player 2 wins
     playerWin(2);
   } else if (p1Choice === "Paper" && p2Choice === "Scissors") {
-    // player 2 wins
     playerWin(2);
   } else if (p1Choice === "Paper" && p2Choice === "Rock") {
-    // player 1 wins
     playerWin(1);
   } else if (p1Choice === "Scissors" && p2Choice === "Rock") {
-    // player 2 wins
     playerWin(2);
   } else if (p1Choice === "Scissors" && p2Choice === "Paper") {
-    // player 1 wins
     playerWin(1);
   }
 }
 
 function playerWin(whoThat) {
+  playersObject.whoWon = whoThat;
   if (whoThat === 1) {
     console.log("Player 1 wins");
-    $results.text("Player 1 wins");
-    // database.ref("/players/player1/wins").set();
-
-    database.ref("/players/player1/wins").transaction(function(currentwins) {
-      // If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/whoWon").set(1);
+    database.ref("/players/player1/wins").transaction(function(currentwins) { If node/clicks has never been set, currentRank will be `null`.
       return (currentwins || 0) + 1;
     });
-    database.ref("/players/player2/losses").transaction(function(currentwins) {
-      // If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/players/player2/losses").transaction(function(currentwins) { If node/clicks has never been set, currentRank will be `null`.
       return (currentwins || 0) + 1;
     });
   } else if (whoThat === 2) {
     console.log("Player 2 wins");
-    $results.text("Player 2 wins");
-
-    database.ref("/players/player2/wins").transaction(function(currentwins) {
-      // If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/whoWon").set(2);
+    database.ref("/players/player2/wins").transaction(function(currentwins) { If node/clicks has never been set, currentRank will be `null`.
       return (currentwins || 0) + 1;
     });
-    database.ref("/players/player1/losses").transaction(function(currentwins) {
-      // If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/players/player1/losses").transaction(function(currentwins) { If node/clicks has never been set, currentRank will be `null`.
       return (currentwins || 0) + 1;
     });
   } else {
     console.log("It's a tie");
-    $results.text("It's a tie");
-
-    database.ref("/players/player1/ties").transaction(function(currentties) {
-      // If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/whoWon").set(0);
+    database.ref("/players/player1/ties").transaction(function(currentties) { If node/clicks has never been set, currentRank will be `null`.
       return (currentties || 0) + 1;
     });
-
-    database.ref("/players/player2/ties").transaction(function(currentties) {
-      // If node/clicks has never been set, currentRank will be `null`.
+    database.ref("/players/player2/ties").transaction(function(currentties) { If node/clicks has never been set, currentRank will be `null`.
       return (currentties || 0) + 1;
     });
   }
