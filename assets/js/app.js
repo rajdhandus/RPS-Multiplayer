@@ -55,8 +55,6 @@ var playersObject = {
   whoWon: -1
 };
 
-console.log(playersObject);
-
 window.onbeforeunload = function() {
   if (whoAmI === 1) {
     database.ref("/players/player1/name").set("");
@@ -85,16 +83,12 @@ window.onbeforeunload = function() {
 
 function assignPlayer() {
   var nameOfPlayer = $nameInput.val().trim();
-  console.log(nameOfPlayer);
 
   if (playersObject.players.player1.name === "") {
     playersObject.players.player1.name = nameOfPlayer;
     whoAmI = 1;
     $("#statusMsg").html("&nbsp;");
     $("#chatInput").attr("placeholder", "Type your messages here");
-    // $("#chatInput").attr("disabled", "");
-    // $("#chatInput").removeClass("disabled");
-
     $("#chatInput").attr("disabled", "");
     $("#chatInput").prop("disabled", false);
     $("#chatInput").removeClass("disabled");
@@ -107,9 +101,6 @@ function assignPlayer() {
     whoAmI = 2;
     $("#statusMsg").html("&nbsp;");
     $("#chatInput").attr("placeholder", "Type your messages here");
-    // $("#chatInput").attr("disabled", "");
-    // $("#chatInput").removeClass("disabled");
-
     $("#chatInput").attr("disabled", "");
     $("#chatInput").prop("disabled", false);
     $("#chatInput").removeClass("disabled");
@@ -132,10 +123,6 @@ database.ref("/whoWon").on("value", announceWinner, errorHanlder);
 
 database.ref("/messages").on("child_added", function(snapshot) {
   var newPost = snapshot.val();
-  console.log("message added");
-  console.log(newPost.who);
-  console.log(playersObject.players.player1.name);
-
   var message = $("<div>");
   message.addClass("message");
   var img = $("<img>");
@@ -156,29 +143,10 @@ database.ref("/messages").on("child_added", function(snapshot) {
   message.append(pMsg);
 
   message.prependTo(".chat-container");
-
-  // let img, span;
-  // if (newPost.who === playersObject.players.player1.name) {
-  //   img =
-  //     '<div class="msgContainer"><img src="./assets/images/nopic_192.png" alt="Avatar" style="width:30%;"><p>';
-  //   span = '</p><span class="time-left">';
-  // } else {
-  //   img =
-  //     '<div class="msgContainer darker"><img src="./assets/images/nopic_192.png" alt="Avatar" class="right" style="width:30%;"><p>';
-  //   span = '</p><span class="time-right">';
-  // }
-  // $("#chatContainer").append(
-  //   img +
-  //     newPost.msg +
-  //     span +
-  //     moment(newPost.postedAt).fromNow() +
-  //     "</span></div>"
-  // );
 });
 
 function announceWinner(snapshot) {
   var winner = snapshot.val();
-  console.log("Winner is " + winner);
   if (winner !== null && winner !== "") {
     if (winner === 1) {
       $results.text(playersObject.players.player1.name + " wins!!!");
@@ -194,14 +162,11 @@ function announceWinner(snapshot) {
 }
 
 function turnChanged(snapshot) {
-  console.log("turnChanged event happened " + snapshot.val());
   playersObject.whoseTurn = snapshot.val();
   highlightTurns();
 }
 
 function syncLocalObj(snapshot) {
-  console.log("syncLocalObj ");
-  console.log(snapshot.val());
   if (snapshot.val() !== null) {
     playersObject.players = snapshot.val();
     refreshUI();
@@ -210,8 +175,6 @@ function syncLocalObj(snapshot) {
 }
 
 function highlightTurns() {
-  console.log("highlightTurns " + playersObject.whoseTurn);
-
   if (
     playersObject &&
     playersObject.whoseTurn &&
@@ -290,19 +253,15 @@ function errorHanlder(errorObj) {
 }
 
 function updateDB() {
-  console.log(playersObject);
   database.ref().set(playersObject);
 }
 
 function playerChoiceEvent() {
-  console.log("playerChoiceEvent called");
   if (
     $(this)
       .attr("id")
       .includes("player1")
   ) {
-    console.log("Player 1 button clicked");
-    console.log($(this).attr("id"));
     playersObject.players.player1.currentChoice = $(this).text();
     playersObject.whoseTurn = 2;
     database.ref().set(playersObject);
@@ -312,8 +271,6 @@ function playerChoiceEvent() {
       .attr("id")
       .includes("player2")
   ) {
-    console.log("Player 2 button clicked");
-    console.log($(this).attr("id"));
     playersObject.players.player2.currentChoice = $(this).text();
     playersObject.whoseTurn = 1;
     database.ref().set(playersObject);
@@ -375,14 +332,12 @@ function chickenDinner() {
   database
     .ref("/players/player1/currentChoice")
     .on("value", function(snapshot) {
-      console.log(snapshot.val());
       p1Choice = snapshot.val();
     });
 
   database
     .ref("/players/player2/currentChoice")
     .on("value", function(snapshot) {
-      console.log(snapshot.val());
       p2Choice = snapshot.val();
     });
 
@@ -417,8 +372,6 @@ $('input[name="chatInput"]').on("keyup", function() {
 $("#sendBtn").on("click", sendChat);
 
 function sendChat() {
-  console.log("message is sent");
-
   var msgPushRef = database.ref("/messages").push();
   var thisPlayerName = "player" + whoAmI;
   msgPushRef.set({
@@ -437,7 +390,6 @@ function sendChat() {
 function playerWin(whoThat) {
   playersObject.whoWon = whoThat;
   if (whoThat === 1) {
-    console.log("Player 1 wins");
     database.ref("/whoWon").set(1);
     database.ref("/players/player1/wins").transaction(function(currentwins) {
       return (currentwins || 0) + 1;
@@ -446,7 +398,6 @@ function playerWin(whoThat) {
       return (currentwins || 0) + 1;
     });
   } else if (whoThat === 2) {
-    console.log("Player 2 wins");
     database.ref("/whoWon").set(2);
     database.ref("/players/player2/wins").transaction(function(currentwins) {
       return (currentwins || 0) + 1;
@@ -455,7 +406,6 @@ function playerWin(whoThat) {
       return (currentwins || 0) + 1;
     });
   } else {
-    console.log("It's a tie");
     database.ref("/whoWon").set(0);
     database.ref("/players/player1/ties").transaction(function(currentties) {
       return (currentties || 0) + 1;
