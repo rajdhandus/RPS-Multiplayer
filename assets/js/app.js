@@ -73,6 +73,7 @@ window.onbeforeunload = function() {
     database.ref("/players/player2/ties").set(0);
   }
   database.ref("/whoseTurn").set(0);
+  database.ref("/whoWon").set(-1);
   $person2.removeClass("highlight");
   $person1.removeClass("highlight");
 };
