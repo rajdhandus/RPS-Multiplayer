@@ -85,12 +85,14 @@ function assignPlayer() {
   if (playersObject.players.player1.name === "") {
     playersObject.players.player1.name = nameOfPlayer;
     whoAmI = 1;
+    $("#statusMsg").html("&nbsp;");
     if (playersObject.players.player2.name !== "") {
       playersObject.whoseTurn = 1;
     }
   } else if (playersObject.players.player2.name === "") {
     playersObject.players.player2.name = nameOfPlayer;
     whoAmI = 2;
+    $("#statusMsg").html("&nbsp;");
     playersObject.whoseTurn = 1;
   } else {
     console.log("Both players are assigned");
@@ -326,6 +328,42 @@ function chickenDinner() {
   } else if (p1Choice === "Scissors" && p2Choice === "Paper") {
     playerWin(1);
   }
+}
+
+$('input[name="chatInput"]').on("keyup", function() {
+  if (whoAmI === 1 || whoAmI === 2) {
+    if ($(this).val()) {
+      $("#sendBtn").removeAttr("disabled");
+      $("#sendBtn").removeClass("disabled");
+    }
+  } else {
+    $("#statusMsg").text("Please log-in to send messages");
+  }
+});
+
+$("#sendBtn").on("click", sendChat);
+
+function sendChat() {
+  console.log("message is sent");
+  var msg =
+    whoAmI +
+    " : " +
+    $('input[name="chatInput"]')
+      .val()
+      .trim();
+
+  var msgPushRef = database.ref("/messages").push();
+
+  msgPushRef.set({
+    who: whoAmI,
+    msg: $('input[name="chatInput"]')
+      .val()
+      .trim(),
+    postedAt: firebase.database.ServerValue.TIMESTAMP
+  });
+  $('input[name="chatInput"]').empty();
+  $("#sendBtn").attr("disabled", "disabled");
+  $("#sendBtn").addClass("disabled");
 }
 
 function playerWin(whoThat) {
