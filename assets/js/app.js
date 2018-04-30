@@ -13,6 +13,7 @@ var $person1 = $("#person1");
 var $person2 = $("#person2");
 var $statusMsg = $("#statusMsg");
 var $results = $("#results");
+let firstIteration = true;
 
 $startBtn.on("click", assignPlayer);
 $player1Rock.on("click", playerChoiceEvent);
@@ -55,7 +56,9 @@ var playersObject = {
   whoWon: -1
 };
 
-window.onbeforeunload = function() {
+window.onbeforeunload = resetDB;
+
+function resetDB() {
   if (whoAmI === 1) {
     database.ref("/players/player1/name").set("");
     database.ref("/players/player1/currentChoice").set("");
@@ -79,7 +82,14 @@ window.onbeforeunload = function() {
     $person2.removeClass("highlight");
     $person1.removeClass("highlight");
   }
-};
+}
+
+function enableChat() {
+  $("#chatInput").attr("placeholder", "Type your messages here");
+  $("#chatInput").attr("disabled", "");
+  $("#chatInput").prop("disabled", false);
+  $("#chatInput").removeClass("disabled");
+}
 
 function assignPlayer() {
   var nameOfPlayer = $nameInput.val().trim();
@@ -88,11 +98,7 @@ function assignPlayer() {
     playersObject.players.player1.name = nameOfPlayer;
     whoAmI = 1;
     $("#statusMsg").html("&nbsp;");
-    $("#chatInput").attr("placeholder", "Type your messages here");
-    $("#chatInput").attr("disabled", "");
-    $("#chatInput").prop("disabled", false);
-    $("#chatInput").removeClass("disabled");
-
+    enableChat();
     if (playersObject.players.player2.name !== "") {
       playersObject.whoseTurn = 1;
     }
@@ -100,11 +106,7 @@ function assignPlayer() {
     playersObject.players.player2.name = nameOfPlayer;
     whoAmI = 2;
     $("#statusMsg").html("&nbsp;");
-    $("#chatInput").attr("placeholder", "Type your messages here");
-    $("#chatInput").attr("disabled", "");
-    $("#chatInput").prop("disabled", false);
-    $("#chatInput").removeClass("disabled");
-
+    enableChat();
     playersObject.whoseTurn = 1;
   } else {
     console.log("Both players are assigned");
@@ -196,16 +198,18 @@ function announceWinner(snapshot) {
 
 function turnChanged(snapshot) {
   playersObject.whoseTurn = snapshot.val();
-  // setTimeout(function() {
   highlightTurns();
-  // }, 2000);
 }
 
 function syncLocalObj(snapshot) {
   if (snapshot.val() !== null) {
     playersObject.players = snapshot.val();
     refreshUI();
-    disableOtherBtns();
+    if (whoAmI === 1) {
+      toggleButtons(2, false);
+    } else if (whoAmI === 2) {
+      toggleButtons(1, false);
+    }
   }
 }
 
@@ -215,15 +219,29 @@ function highlightTurns() {
     playersObject.whoseTurn &&
     playersObject.whoseTurn === 1
   ) {
-    $person1.addClass("highlight");
     $person2.removeClass("highlight");
+
     if (whoAmI === 2) {
-      $statusMsg.text("Opponent's turn! Please wait");
       toggleButtons(whoAmI, false);
     } else if (whoAmI === 1) {
-      $statusMsg.text("Your turn to choose");
       toggleButtons(whoAmI, true);
     }
+    $statusMsg.html("&nbsp;");
+
+    let timeToWait = 2000;
+
+    if (firstIteration) {
+      timeToWait = 0;
+      firstIteration = false;
+    }
+    setTimeout(function() {
+      $person1.addClass("highlight");
+      if (whoAmI === 2) {
+        $statusMsg.text("Opponent's turn! Please wait");
+      } else if (whoAmI === 1) {
+        $statusMsg.text("Your turn to choose");
+      }
+    }, timeToWait);
   }
   if (
     playersObject &&
@@ -240,24 +258,6 @@ function highlightTurns() {
       $statusMsg.text("Your turn to choose");
       toggleButtons(whoAmI, true);
     }
-  }
-}
-
-function disableOtherBtns() {
-  if (whoAmI === 1) {
-    $player2Paper.attr("disabled", "disabled");
-    $player2Paper.toggleClass("disabled", true);
-    $player2Rock.attr("disabled", "disabled");
-    $player2Rock.toggleClass("disabled", true);
-    $player2Scissors.attr("disabled", "disabled");
-    $player2Scissors.toggleClass("disabled", true);
-  } else if (whoAmI === 2) {
-    $player1Paper.attr("disabled", "disabled");
-    $player1Paper.toggleClass("disabled", true);
-    $player1Rock.attr("disabled", "disabled");
-    $player1Rock.toggleClass("disabled", true);
-    $player1Scissors.attr("disabled", "disabled");
-    $player1Scissors.toggleClass("disabled", true);
   }
 }
 
@@ -391,35 +391,6 @@ function chickenDinner() {
   } else if (p1Choice === "Scissors" && p2Choice === "Paper") {
     playerWin(1);
   }
-}
-
-$('input[name="chatInput"]').on("keyup", function() {
-  if (whoAmI === 1 || whoAmI === 2) {
-    if ($(this).val()) {
-      $("#sendBtn").removeAttr("disabled");
-      $("#sendBtn").removeClass("disabled");
-    }
-  } else {
-    $("#statusMsg").text("Please log-in to send messages");
-  }
-});
-
-$("#sendBtn").on("click", sendChat);
-
-function sendChat() {
-  var msgPushRef = database.ref("/messages").push();
-  var thisPlayerName = "player" + whoAmI;
-  msgPushRef.set({
-    who: playersObject.players[thisPlayerName].name,
-    msg: $('input[name="chatInput"]')
-      .val()
-      .trim(),
-    postedAt: firebase.database.ServerValue.TIMESTAMP
-  });
-
-  $('input[name="chatInput"]').val("");
-  $("#sendBtn").attr("disabled", "disabled");
-  $("#sendBtn").addClass("disabled");
 }
 
 function playerWin(whoThat) {
