@@ -150,10 +150,43 @@ function announceWinner(snapshot) {
   if (winner !== null && winner !== "") {
     if (winner === 1) {
       $results.text(playersObject.players.player1.name + " wins!!!");
+      $results.append(
+        "<p>" +
+          playersObject.players.player1.currentChoice +
+          " VS " +
+          playersObject.players.player2.currentChoice +
+          "<p>"
+      );
+      setTimeout(function() {
+        $results.text("");
+        database.ref("/whoWon").set(-1);
+      }, 2000);
     } else if (winner === 2) {
       $results.text(playersObject.players.player2.name + " wins!!!");
+      $results.append(
+        "<p>" +
+          playersObject.players.player1.currentChoice +
+          " VS " +
+          playersObject.players.player2.currentChoice +
+          "<p>"
+      );
+      setTimeout(function() {
+        $results.text("");
+        database.ref("/whoWon").set(-1);
+      }, 2000);
     } else if (winner === 0) {
       $results.text("It's a TIE!!!");
+      $results.append(
+        "<p>" +
+          playersObject.players.player1.currentChoice +
+          " VS " +
+          playersObject.players.player2.currentChoice +
+          "<p>"
+      );
+      setTimeout(function() {
+        $results.text("");
+        database.ref("/whoWon").set(-1);
+      }, 2000);
     } else {
       $results.text("");
     }
@@ -163,7 +196,9 @@ function announceWinner(snapshot) {
 
 function turnChanged(snapshot) {
   playersObject.whoseTurn = snapshot.val();
+  // setTimeout(function() {
   highlightTurns();
+  // }, 2000);
 }
 
 function syncLocalObj(snapshot) {
